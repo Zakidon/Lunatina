@@ -7,6 +7,8 @@ import rehypePrettyCode from 'rehype-pretty-code';
 
 
 export default defineConfig({
+  output: 'static',  // Обязательно для Pages
+  site: 'https://zakidon.github.io/Lunatina',  // Твоя ссылка
   base: '/',
   integrations: [
     tailwind({
