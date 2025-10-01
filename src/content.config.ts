@@ -19,7 +19,7 @@ const dialogCollection = defineCollection({
     title: z.string(),
     date: z.date(),
     tags: z.array(z.string()).default([]),
-    content: z.string(),
+    // Удаляем content: z.string() — MDX рендерится автоматически
   }),
 });
 
