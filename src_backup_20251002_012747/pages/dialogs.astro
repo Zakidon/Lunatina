@@ -1,0 +1,41 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import '../styles/base.css';
+import '../styles/themes.css';
+
+const tag = Astro.url.searchParams.get('tag');
+const dialogs: CollectionEntry<'dialogs'>[] = await getCollection('dialogs', ({ data }) => {
+  return tag ? data.tags.includes(tag) : true;
+});
+---
+
+<Layout title="Диалоги Лунатины" description="Наши победы и код с Гроком">
+  <div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Диалоги Лунатины {tag ? `с тегом "${tag}"` : ''}</h1>
+    {dialogs.length === 0 ? (
+      <p class="text-gray-600 dark:text-gray-300">Нет диалогов с этим тегом. 😔</p>
+    ) : (
+      <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {dialogs.map(dialog => (
+          <li class="bg-gradient-to-br from-emerald-50 to-purple-50 dark:from-emerald-900 dark:to-purple-900 p-4 rounded-lg shadow-sm">
+            <a href={`/dialogs/${dialog.slug}`}>
+              <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{dialog.data.title}</h2>
+              <p class="text-gray-600 dark:text-gray-300 text-sm mt-2">{new Date(dialog.data.date).toLocaleDateString()}</p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                {dialog.data.tags.map(tag => (
+                  <a
+                    href={`/dialogs?tag=${tag}`}
+                    class="inline-block bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800 dark:hover:bg-gray-700 transition"
+                  >
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</Layout>

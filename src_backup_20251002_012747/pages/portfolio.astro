@@ -1,0 +1,25 @@
+---
+// src/pages/portfolio.astro
+// Комментарий: Страница портфолио с grid-карточками (минимум 3-5 проектов)
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const projects = await getCollection('portfolio');
+// Добавьте placeholder в src/content/portfolio/project1.md etc.
+---
+
+<Layout title="Портфолио">
+  <main class="container mx-auto p-4">
+    <h1 class="text-4xl">Портфолио</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {projects.map(project => (
+        <div class="border p-4 rounded" aria-label={project.data.title}>
+          <img src={project.data.image} alt={project.data.title} />
+          <h2>{project.data.title}</h2>
+          <p>{project.data.description}</p>
+          <a href={project.data.link}>Ссылка</a>
+        </div>
+      ))}
+    </div>
+  </main>
+</Layout>

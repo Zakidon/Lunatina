@@ -1,0 +1,49 @@
+---
+const quotes = [
+  { text: "Живи, как будто танцуешь под лунным светом!", author: "Лунатина" },
+  { text: "Код — это поэзия, а музыка — код души.", author: "Неизвестный" },
+  { text: "Создай свой вайб и неси его в мир!", author: "Крымский закат" },
+  { text: "Пиши код, как будто завтра конец света!", author: "Хакер Лунатина" },
+  { text: "Lo-fi в наушниках — код в сердце.", author: "Synthwave Bro" },
+  { text: "Бери гитару, код и кофе — ночь твоя!", author: "Лунный кодер" },
+  { text: "Крымский закат шепчет: твори, люби, мечтай.", author: "Лунатина" },
+  { text: "Синтвейв в ушах, код в руках — жизнь в кайф!", author: "Неоновая душа" },
+];
+
+const announcements = [
+  { text: "Скоро новый lo-fi плейлист на Лунатине!" },
+  { text: "Мастер-класс по Astro — записывайся!" },
+  { text: "Новый пост про synthwave уже в блоге!" },
+];
+
+const ads = [
+  { text: "Попробуй наш кофе 'Крымский закат' — вкус ночи!", link: "https://example.com/coffee" },
+  { text: "Synthwave merch — свети ярко!", link: "https://example.com/merch" },
+  { text: "Курсы по кодингу с Лунатиной — стань профи!", link: "https://example.com/courses" },
+];
+
+// Выбираем тип контента
+const headerContentTypes = ['quote', 'announcement', 'ad'];
+const selectedType = headerContentTypes[Math.floor(Math.random() * headerContentTypes.length)];
+let headerContent;
+if (selectedType === 'quote') {
+  headerContent = quotes[Math.floor(Math.random() * quotes.length)];
+} else if (selectedType === 'announcement') {
+  headerContent = announcements[Math.floor(Math.random() * announcements.length)];
+} else {
+  headerContent = ads[Math.floor(Math.random() * ads.length)];
+}
+---
+
+<div class="text-center flex-1 animate-fade-in">
+  {selectedType === 'ad' ? (
+    <a href={headerContent.link} class="text-white dark:text-white text-xl font-bold font-[Playfair Display] hover:underline">
+      {headerContent.text}
+    </a>
+  ) : (
+    <div>
+      <p class="text-white dark:text-white text-xl font-bold font-[Playfair Display]">{headerContent.text}</p>
+      {headerContent.author && <p class="text-gray-300 dark:text-gray-300 text-base mt-2 font-[Playfair Display] italic">— {headerContent.author}</p>}
+    </div>
+  )}
+</div>

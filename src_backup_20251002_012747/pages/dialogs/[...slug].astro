@@ -1,0 +1,47 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import '../../styles/base.css';
+import '../../styles/themes.css';
+
+export async function getStaticPaths() {
+  const dialogs = await getCollection('dialogs');
+  return dialogs.map(dialog => ({
+    params: { slug: dialog.slug },
+    props: { dialog },
+  }));
+}
+
+// ❌ Ошибка: dialog.data.content не существует
+// ✅ Исправление: используйте dialog.body
+const { dialog }: { dialog: CollectionEntry<'dialogs'> } = Astro.props;
+---
+
+<Layout title={dialog.data.title} description={`Диалог от ${new Date(dialog.data.date).toLocaleDateString()}`}>
+  <div class="container mx-auto py-8">
+    <div class="relative h-96 mb-8">
+      <div class="absolute inset-0 bg-gradient-to-t from-emerald-500/70 to-transparent flex flex-col justify-end p-4">
+        <h1 class="text-3xl font-bold text-white">{dialog.data.title}</h1>
+        <p class="text-white">{new Date(dialog.data.date).toLocaleDateString()}</p>
+      </div>
+    </div>
+    <article class="thoughts-theme prose dark:prose-invert max-w-none">
+      <!-- ❌ Старый код -->
+      <!-- <slot dangerouslySetInnerHTML={{ __html: content }} /> -->
+
+      <!-- ✅ Новый код: используем dialog.body -->
+      <div class="markdown-content" innerHTML={dialog.body}></div>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        {dialog.data.tags.map(tag => (
+          <a
+            href={`/dialogs?tag=${tag}`}
+            class="inline-block bg-black text-white px-4 py-1 rounded-md hover:bg-gray-800 dark:hover:bg-gray-700 transition"
+          >
+            {tag}
+          </a>
+        ))}
+      </div>
+    </article>
+  </div>
+</Layout>

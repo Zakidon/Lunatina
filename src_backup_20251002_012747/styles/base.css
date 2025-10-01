@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: linear-gradient(to bottom right, #d1fae5, #ede9fe) !important; /* emerald-50 to purple-50 */
+}
+.dark body {
+  background: linear-gradient(to bottom right, #064e3b, #6b7280) !important; /* emerald-900 to purple-900 */
+}
+body, html {
+  @apply text-gray-900 dark:text-gray-100 font-sans;
+}
+
+.container {
+  @apply max-w-6xl mx-auto px-6;
+}
+
+h1, h2, h3 {
+  @apply font-bold text-gray-900 dark:text-white;
+}
+
+astro-dev-toolbar {
+  display: none !important;
+}
+
+.prose {
+  @apply bg-gradient-to-br from-emerald-50 to-purple-50 dark:bg-gradient-to-br dark:from-emerald-900 dark:to-purple-900 p-6 rounded-lg shadow-sm text-gray-900 dark:text-gray-100;
+}
+
+.container {
+  max-width: 100%;
+}
+
+footer img {
+  transition: transform 0.3s ease;
+}
+footer img:hover {
+  transform: scale(1.2);
+}
