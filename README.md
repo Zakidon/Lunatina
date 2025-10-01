@@ -1,43 +1,12 @@
-# Astro Starter Kit: Minimal
-
-```sh
-npm create astro@latest -- --template minimal
-```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+# Журнал побед Лунатины
+- **Дата**: 30 сентября 2025
+- **Теги**: Динамические через `/blog/tag/[tag]` (`layfstayl`, `koding`, `grok`).
+- **Картинка**: Заголовок и описание на картинке с градиентом (`to-emerald-500/70`).
+- **Плеер**: `musicUrl` в `Sidebar.astro` (Frisky Radio).
+- **Компоненты**: `Tag.astro` для тегов, `Sidebar.astro` для сайдбара.
+- **Стили**: Tailwind, градиенты (`emerald-50 to purple-50`), адаптивность (`sm:h-64 md:h-96`).
+- **Структура**:
+  - `src/pages/blog.astro`: Список постов, теги через `Tag.astro`.
+  - `src/pages/blog/[...slug].astro`: Пост с картинкой и тегами.
+  - `src/pages/blog/tag/[tag].astro`: Фильтрация по тегу.
+  - `src/components/Tag.astro`: Компонент для тегов.

@@ -1,0 +1,87 @@
+---
+title: "Конспект проекта Astro + Tina CMS"
+date: 2025-09-22
+tags: ["кодим"]
+category: кодим
+image: /images/placeholder1.jpg
+description: "Сайт на Astro с Tina CMS для управления контентом (блог, портфолио, галерея, презентации, обучение). Grok помощник толковый)"
+---
+
+# Конспект проекта Astro + Tina CMS
+
+## Основные данные
+- **Папка проекта**: `F:\SITES\astro-cms-project`
+- **Цель**: Сайт на Astro с Tina CMS для управления контентом (блог, портфолио, галерея, презентации, обучение).
+- **Текущий статус** (на 22 сентября 2025):
+  - Главная страница работает (http://localhost:4321).
+  - Tina CMS админка работает (http://localhost:4001/admin), но URL множится (`/admin/#/~/admin/...`).
+  - Блог: посты отображаются, картинка в посте появилась, стили `prose` есть.
+  - Галерея: страница открывается, но lightbox не работает (ошибка TypeScript: `src` в `HTMLElement`).
+  - Обучение: страница не работает (ошибка `Fragment` в `learning.astro`).
+  - Презентации: страница открывается, но layout кривой (всё слева, не в гриде).
+  - Страница диалога тормозит из-за большого количества кода/ошибок.
+
+## Структура проекта
+- **Основные файлы**:
+  - `astro.config.mjs`: Конфигурация Astro (интеграции: tailwind, mdx, sitemap).
+  - `package.json`: Зависимости Astro 5.x, Tina CMS, Tailwind.
+  - `tailwind.config.js`: Настройка Tailwind с `@tailwindcss/typography`.
+  - `src/layouts/Layout.astro`: Основной layout с хедером, футером, тёмной темой.
+  - `src/pages/index.astro`: Главная страница (грид с карточками).
+  - `src/pages/blog.astro`: Список постов с тегами.
+  - `src/pages/blog/tag/[tag].astro`: Фильтр постов по тегу.
+  - `src/pages/blog/[...slug].astro`: Страница поста с `prose`.
+  - `src/pages/gallery.astro`: Галерея с lightbox (не работает).
+  - `src/pages/presentations.astro`: Презентации (грид сломан).
+  - `src/pages/learning.astro`: Обучение (ошибка `Fragment`).
+  - `src/content/blog/`, `src/content/gallery/`, `src/content/presentations/`, `src/content/learning/`: Коллекции контента.
+  - `public/images/`: Картинки (placeholder1-10.jpg для галереи).
+  - `tina/config.ts`: Конфигурация Tina CMS (создана `npx tinacms init`).
+
+## Установка и запуск
+1. Убедись, что зависимости установлены:
+   ```bash
+   npm install
+   npm install @tailwindcss/typography
+   ```
+2. Запуск:
+   ```bash
+   npx tinacms dev -c "npm run dev"
+   ```
+   - Astro: http://localhost:4321
+   - Tina: http://localhost:4001/admin
+3. Очистка кэша, если проблемы:
+   ```bash
+   Remove-Item -Recurse -Force node_modules
+   Remove-Item -Recurse -Force .astro
+   npm install
+   ```
+
+## Последние исправления
+- **astro.config.mjs**: Убрали `tina()` из `integrations`, так как Tina работает через `@tinacms/cli`.
+- **learning.astro**: Заменили `<>` на `<Fragment>` для исправления ошибки.
+- **gallery.astro**: Lightbox не работает из-за TypeScript ошибки (`src` в `HTMLElement`).
+- **blog/[...slug].astro**: Добавлены стили `prose`, картинка отображается.
+- **presentations.astro**: Грид не работает, нужно исправить CSS.
+
+## Ошибки (на момент 22.09.2025)
+1. **learning.astro**: "Unable to assign attributes when using `<>` Fragment shorthand syntax" (строка 38).
+2. **gallery.astro**: TypeScript: "Свойство `src` не существует в типе `HTMLElement`" (строка 24) + конфликт `hidden` и `flex`.
+3. **tag/[tag].astro**: TypeScript: "Не удается найти модуль `../../layouts/Layout.astro`" (строка 3).
+4. **Tina CMS**: URL админки множится (`/admin/#/~/admin/...`).
+5. **Презентации**: Грид не работает, всё слева.
+6. **Производительность**: Страница диалога тормозит.
+
+## Следующие шаги
+1. Проверить `learning.astro` после замены `<>` на `<Fragment>`.
+2. Исправить lightbox в `gallery.astro` (TypeScript ошибка).
+3. Починить грид в `presentations.astro`.
+4. Разобраться с множащимися URL в Tina.
+5. Проверить стили `prose` в блоге.
+6. Оптимизировать производительность (если нужно).
+
+## Промпт для нового диалога
+Скопируй и вставь это в новый чат, чтобы я сразу вник:
+```plaintext
+Привет, это продолжение проекта Astro + Tina CMS (кодовое слово: лунатина). Папка: F:\SITES\astro-cms-project. Главная работает (http://localhost:4321), Tina админка работает (http://localhost:4001/admin), но URL множится. Блог показывает картинки, но стили prose надо проверить. Галерея: lightbox не работает (ошибка TypeScript: src в HTMLElement). Обучение: ошибка Fragment в learning.astro. Презентации: грид сломан, всё слева. Страница диалога тормозит. Конспект сохранён в project-consp.kt.md. Давай чинить по одной проблеме, начни с [укажи проблему, например, "learning.astro не открывается"]. Напиши ошибку из терминала/F12, если есть.
+```

@@ -1,0 +1,105 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import '../../styles/base.css';
+import '../../styles/components.css';
+import '../../styles/themes.css';
+import '../../styles/code.css';
+import '../../styles/headerthemes/green-purple-header.css';
+
+const slugify = (text: string) => {
+  const map: Record<string, string> = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+    'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+    'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
+    'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+  };
+  return text
+    .toLowerCase()
+    .split('')
+    .map(char => map[char] || char)
+    .join('')
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+const { title, description, tags, category, image, musicUrl} = post.data;
+
+const isCodingTag = category === 'кодим';
+const isThoughtsTag = category === 'мысли';
+const isMusicTag = category === 'музыка';
+const articleClass = isCodingTag ? 'coding-theme rounded-lg' : isThoughtsTag ? 'thoughts-theme rounded-lg' : isMusicTag ? 'music-theme rounded-lg' : 'prose prose-lg dark:prose-invert max-w-none rounded-lg';
+
+const allPosts = await getCollection('blog');
+const postSlugNormalized = slugify(post.slug);
+const relatedPosts = allPosts
+  .filter(p => slugify(p.slug) !== postSlugNormalized && p.data.tags?.some(tag => tags.includes(tag)))
+  .slice(0, 3);
+
+console.log('Post category:', category);
+console.log('Applied class:', articleClass);
+---
+
+<Layout title={title} description={description}>
+  <div class="flex gap-12 max-w-6xl mx-auto">
+    <main class="flex-1">
+      <article class={articleClass}>
+        <!-- Картинка с заголовком и описанием -->
+        <div class="mb-4 relative" style="height: 24rem;">
+          <div class="absolute left-0 bottom-0 w-full h-full z-10 bg-gradient-to-b from-transparent to-emerald-500/70 dark:to-purple-500/70"></div>
+          <img
+            src={image || '/images/placeholder.jpg'}
+            alt={title}
+            class="absolute left-0 top-0 w-full h-full z-0 object-cover rounded-lg"
+          />
+          <div class="p-4 absolute bottom-0 left-0 z-20">
+            <a href={`/blog?tag=${slugify(tags[0] || 'без тега')}`} class="px-4 py-1 bg-black text-white !text-white inline-flex items-center justify-center mb-2 rounded-md">
+              {tags[0] || 'Без тега'}
+            </a>
+            <h1 class="text-3xl font-semibold text-white dark:text-white leading-tight">{title}</h1>
+            <p class="text-gray-300 dark:text-gray-300 text-sm mt-2">{description}</p>
+          </div>
+        </div>
+        <!-- Контент -->
+        <div class="px-4 lg:px-6 mt-12 text-gray-900 dark:text-gray-100 max-w-screen-md mx-auto text-lg leading-relaxed">
+          <Content />
+        </div>
+        <!-- Футер с тегами -->
+        <footer class="mt-8 pt-4 border-t border-gray-200 dark:border-gray-700 max-w-screen-md mx-auto">
+          <h3 class="text-sm font-medium mb-2 text-gray-900 dark:text-white">Теги:</h3>
+          <ul class="flex flex-wrap gap-2">
+            {tags.map(tag => (
+              <li><a href={`/blog?tag=${slugify(tag)}`} class="tag">{tag}</a></li>
+            ))}
+          </ul>
+        </footer>
+        <!-- Похожие посты -->
+        <section class="mt-8 max-w-screen-md mx-auto">
+          <h3 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Похожие посты</h3>
+          <ul class="space-y-4">
+            {relatedPosts.map(related => (
+              <li>
+                <a href={`/blog/${related.slug}`} class="text-amber-600 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-200">
+                  {related.data.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </article>
+    </main>
+    <Sidebar tags={tags} musicUrl={musicUrl} />
+  </div>
+</Layout>

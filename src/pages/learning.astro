@@ -1,0 +1,59 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+type ChapterMap = { [key: string]: CollectionEntry<'learning'>[] };
+
+const articles = await getCollection('learning');
+const chapters: ChapterMap = articles.reduce((acc: ChapterMap, art) => {
+  const ch = art.data.chapter || 'Без главы';
+  acc[ch] = acc[ch] || [];
+  acc[ch].push(art);
+  return acc;
+}, {});
+
+// Предварительно рендерим контент для всех статей
+const renderedArticles = await Promise.all(
+  articles.map(async (art) => {
+    const { Content } = await art.render();
+    return { ...art, Content }; // Сохраняем Content вместе с данными статьи
+  })
+);
+---
+
+<Layout title="Обучение" description="Обучающие статьи, организованные по главам.">
+  <main class="container mx-auto p-4 flex flex-col md:flex-row">
+    <aside class="w-full md:w-1/4 pr-4 mb-4 md:mb-0">
+      <ul>
+        {Object.keys(chapters).map(ch => (
+          <li class="mb-2">
+            <strong>{ch}</strong>
+            <ul class="ml-4">
+              {chapters[ch].map(art => (
+                <li><a href={`#${art.slug}`} class="text-blue-500 hover:underline">{art.data.title}</a></li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <input type="text" placeholder="Поиск..." class="w-full p-2 border rounded mt-4" oninput="searchArticles(this.value)" />
+    </aside>
+    <section class="w-full md:w-3/4">
+      <>
+        {renderedArticles.map(art => (
+          <article id={art.slug} class="mb-8">
+            <h2 class="text-2xl font-semibold">{art.data.title}</h2>
+            <p>{art.data.description}</p>
+            <art.Content />
+            <div class="bg-gray-200 h-2 mt-4"><div class="bg-blue-500 h-2 w-1/2"></div></div>
+          </article>
+        ))}
+      </>
+    </section>
+    <script>
+      function searchArticles(query: string) {
+        console.log('Поиск:', query);
+      }
+    </script>
+  </main>
+</Layout>

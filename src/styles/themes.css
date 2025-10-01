@@ -1,0 +1,61 @@
+/* Тема для категории "кодим" */
+.coding-theme {
+  @apply prose prose-lg max-w-none bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm;
+}
+.coding-theme pre, .coding-theme code {
+  @apply bg-gray-800 text-amber-200 p-3 rounded-lg;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  overflow-x: auto;
+}
+.coding-theme h1, .coding-theme h2, .coding-theme h3 {
+  @apply font-bold text-gray-900 dark:text-white;
+}
+.coding-theme img {
+  @apply w-full h-auto object-contain max-h-96 rounded-lg mb-8;
+}
+.coding-theme :where(code):not(:where(pre code)) {
+  @apply text-amber-800 dark:text-amber-200;
+}
+
+/* Тема для категории "мысли" */
+.thoughts-theme {
+  @apply bg-gray-50 dark:bg-gray-800 p-6 rounded-lg max-w-none text-base leading-7;
+}
+.thoughts-theme h1, .thoughts-theme h2, .thoughts-theme h3 {
+  @apply font-serif text-gray-900 dark:text-white;
+}
+.thoughts-theme img {
+  @apply w-full h-auto object-contain max-h-96 rounded-lg mb-6;
+}
+.thoughts-theme :where(code):not(:where(pre code)) {
+  @apply text-amber-800 dark:text-amber-200;
+}
+
+/* Тема для категории "музыка" (зелёно-фиолетовый) */
+.music-theme {
+  @apply bg-gradient-to-br from-emerald-50 to-purple-50 dark:bg-gradient-to-br dark:from-emerald-900 dark:to-purple-900 p-6 rounded-lg max-w-none text-base leading-7;
+}
+.music-theme h1, .music-theme h2, .music-theme h3 {
+  @apply font-sans text-gray-900 dark:text-gray-100;
+}
+.music-theme img {
+  @apply w-full h-auto object-contain max-h-96 rounded-lg mb-6 border-2 border-amber-400;
+}
+.music-theme :where(code):not(:where(pre code)) {
+  @apply text-pink-500 dark:text-pink-300;
+}
+
+/* Неоновая тема */
+.neon-theme {
+  @apply bg-gradient-to-br from-pink-500 to-cyan-500 p-6 rounded-lg max-w-none text-base leading-7;
+}
+.neon-theme h1, .neon-theme h2, .neon-theme h3 {
+  @apply font-sans text-white dark:text-white;
+}
+.neon-theme img {
+  @apply w-full h-auto object-contain max-h-96 rounded-lg mb-6 border-2 border-white;
+}
+.neon-theme :where(code):not(:where(pre code)) {
+  @apply text-white dark:text-white;
+}

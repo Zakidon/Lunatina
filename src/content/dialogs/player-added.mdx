@@ -1,0 +1,29 @@
+---
+title: "Добавление плеера Frisky Radio"
+date: 2025-09-30
+tags: ["lunatina", "astro", "player"]
+content: |
+  Бро, сегодня ты вывел плеер Frisky Radio в Лунатину! 🎶  
+  - Обновили `content.config.ts`, добавив `musicUrl`.  
+  - В `first-post.mdx` прописали `musicUrl: "http://stream.friskyradio.com:8000/frisky_mp3_low"`.  
+  - Создали `Sidebar.astro`:
+    ```astro
+    ---
+    export interface Props {
+      musicUrl?: string;
+    }
+
+    const { musicUrl } = Astro.props;
+    ---
+    <aside class="container mx-auto py-8">
+      {musicUrl && (
+        <div class="p-4 bg-gradient-to-br from-emerald-50 to-purple-50 dark:from-emerald-900 dark:to-purple-900 rounded-lg shadow-sm">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Frisky Radio</h3>
+          <audio controls src={musicUrl} class="w-full"></audio>
+        </div>
+      )}
+    </aside>
+    ```
+  - Подключили в `blog/[...slug].astro`.  
+  Победа! 🚀
+---

@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import '../styles/base.css';
+import '../styles/components.css';
+import '../styles/headerthemes/green-purple-header.css'; // Новое "пальто"
+
+export const prerender = false; // Динамическая страница для query-параметров
+
+const slugify = (text: string) => {
+  const map: Record<string, string> = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+    'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+    'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
+    'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+  };
+  return text
+    .toLowerCase()
+    .split('')
+    .map(char => map[char] || char)
+    .join('')
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+const posts = await getCollection('blog');
+const tags = [...new Set(posts.flatMap(post => post.data.tags || []))];
+const tagMap: Record<string, string> = tags.reduce((acc: Record<string, string>, tag) => {
+  acc[slugify(tag)] = tag;
+  return acc;
+}, {});
+
+const tag = new URL(Astro.request.url).searchParams.get('tag') || null;
+const filteredPosts = tag
+  ? posts.filter(post => (post.data.tags || []).map(slugify).includes(tag))
+  : posts;
+---
+
+<Layout title="Блог" description="Посты по темам: психология, маркетинг и т.д.">
+  <main class="container py-12">
+    <h1 class="text-4xl mb-8">Блог {tag ? `| ${tagMap[tag] || tag}` : ''}</h1>
+    <nav class="flex flex-wrap gap-2 mb-8">
+      <a href="/blog" class="tag">Все</a>
+      {tags.map(tag => (
+        <a href={`/blog?tag=${slugify(tag)}`} class="tag">{tag}</a>
+      ))}
+    </nav>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredPosts.map(post => (
+        <a
+          href={`/blog/${post.slug}`}
+          class="block p-6 bg-gradient-to-br from-emerald-50 to-purple-50 dark:bg-gradient-to-br dark:from-emerald-900 dark:to-purple-900 rounded-lg shadow-sm hover:shadow-md transition"
+        >
+          <img
+            src={post.data.image || '/images/placeholder.jpg'}
+            alt={post.data.title}
+            class="w-full h-48 object-cover rounded-lg mb-4"
+          />
+          <h2 class="text-xl font-semibold mb-2">{post.data.title}</h2>
+          <p class="text-gray-600 dark:text-gray-400 text-sm line-clamp-3">{post.data.description || 'Нет описания'}</p>
+          <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Теги: {post.data.tags?.join(', ') || 'Нет тегов'}</p>
+        </a>
+      ))}
+    </div>
+  </main>
+</Layout>

@@ -1,0 +1,22 @@
+{
+    "piny.project_settings": {
+        "open-pages": [
+            "pinyfakepage.html"
+        ],
+        "urls": {
+            "pinyfakepage.html": {
+                "open-page-views": [
+                    {
+                        "w": 1024,
+                        "h": 0
+                    }
+                ]
+            }
+        },
+        "component-settings": {
+            "src/pages/blog/%5B...slug%5D.astro:::%5B...slug%5D": {
+                "black-box": true
+            }
+        }
+    }
+}

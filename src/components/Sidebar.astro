@@ -1,0 +1,53 @@
+---
+const { tags, musicStream, musicUrl } = Astro.props;
+
+export interface Props {
+  tags: string[];
+  musicStream?: string;
+  musicUrl?: string;
+}
+
+const slugify = (text: string) => {
+  const map: Record<string, string> = {
+    'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+    'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o',
+    'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
+    'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
+  };
+  return text
+    .toLowerCase()
+    .split('')
+    .map(char => map[char] || char)
+    .join('')
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+};
+
+const streams: Record<string, string> = {
+  'frisky': 'http://stream.friskyradio.com:8000/frisky_mp3_low',
+  'lo-fi': 'https://stream.zeno.fm/0r0xa6fmrhrvv',
+  'synthwave': 'https://icecast.radiofrance.fr/franceinter-midfi.mp3'
+};
+
+const getStreamUrl = (stream?: string): string => stream ? streams[stream] || '' : '';
+
+import '../styles/components.css';
+---
+
+<aside class="w-80 p-6 bg-gradient-to-br from-emerald-50 to-purple-50 dark:bg-gradient-to-br dark:from-emerald-900 dark:to-purple-900 rounded-lg shadow-sm">
+  <h3 class="font-bold mb-4 text-gray-900 dark:text-white">Связанные теги</h3>
+  <ul class="flex flex-wrap gap-2">
+    {tags.map(tag => <li><a href={`/blog?tag=${slugify(tag)}`} class="tag">{tag}</a></li>)}
+  </ul>
+  {(musicStream || musicUrl) && (
+    <div class="mt-4">
+      <h3 class="font-bold mb-2 text-gray-900 dark:text-white">Плеер</h3>
+      <audio controls class="w-full bg-gradient-to-r from-emerald-400 to-purple-600 rounded-lg p-2">
+        <source src={musicUrl || getStreamUrl(musicStream)} type="audio/mpeg" />
+        Ваш браузер не поддерживает аудио.
+      </audio>
+    </div>
+  )}
+</aside>
+

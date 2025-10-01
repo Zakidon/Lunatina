@@ -1,0 +1,7 @@
+header {
+  @apply bg-gradient-to-r from-orange-400 to-pink-600 text-white p-6 rounded-t-lg shadow-neon;
+}
+
+.shadow-neon {
+  box-shadow: 0 0 10px #ff4500, 0 0 20px #ff69b4;
+}

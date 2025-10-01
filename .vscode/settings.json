@@ -1,0 +1,13 @@
+{
+  "tailwindCSS.includeLanguages": {
+    "astro": "html"
+  },
+  "css.validate": true,
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "files.associations": {
+    "*.astro": "astro",
+    "*.css": "tailwindcss"
+  }
+}

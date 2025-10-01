@@ -1,0 +1,21 @@
+---
+// src/pages/presentations.astro
+// Комментарий: Страница презентаций с embeds (SlideShare или PDF)
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+
+const presentations = await getCollection('presentations');
+---
+
+<Layout title="Презентации">
+  <main class="container mx-auto p-4">
+    <h1 class="text-4xl">Презентации</h1>
+    {presentations.map(pres => (
+      <div class="mb-8">
+        <h2>{pres.data.title}</h2>
+        <!-- Комментарий: Embed для презентации -->
+        <iframe src={pres.data.embed} width="600" height="400" allowfullscreen></iframe>
+      </div>
+    ))}
+  </main>
+</Layout>

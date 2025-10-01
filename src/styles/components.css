@@ -1,0 +1,11 @@
+.tag {
+  @apply inline-flex px-3 py-1 rounded-full text-sm font-medium bg-amber-100 text-amber-800 hover:bg-amber-200 dark:bg-purple-900 dark:text-purple-200 transition-transform hover:scale-105;
+}
+
+header {
+  @apply bg-gradient-to-r from-amber-400 to-emerald-600 text-white p-6 rounded-t-lg;
+}
+
+aside {
+  @apply w-1/3 sticky top-8 self-start bg-gray-50 dark:bg-gray-800 p-4 rounded-lg;
+}
