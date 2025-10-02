@@ -7,8 +7,8 @@ import rehypePrettyCode from 'rehype-pretty-code';
 
 export default defineConfig({
   output: 'static',  // Обязательно для Pages
-  site: 'https://zakidon.github.io/Lunatina',  // ← Добавьте запятую
-  base: '/Lunatina',
+  site: 'https://zakidon.github.io',  // ← Добавьте запятую
+  base: '/Lunatina/',
   integrations: [
     tailwind({
       configFile: './tailwind.config.js',

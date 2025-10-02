@@ -5,7 +5,7 @@ import '../styles/base.css';
 import '../styles/components.css';
 import '../styles/headerthemes/green-purple-header.css';
 
-export const prerender = true; // Для статического рендера
+export const prerender = true;
 
 const slugify = (text: string) => {
   const map: Record<string, string> = {
@@ -21,32 +21,22 @@ const slugify = (text: string) => {
     .join('')
     .replace(/[^a-z0-9]/g, '-')
     .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+    .replace(/^-|-$/g, '') || 'default-slug';
 };
 
-// Генерируем статические пути: /blog (все посты) и /blog/[tag] (по тегам)
 export async function getStaticPaths() {
   const posts = (await getCollection('blog')) || [];
-  console.log('Posts in getStaticPaths:', posts); // Отладка
-  const tags = [...new Set(posts.flatMap(post => post.data.tags ?? []))];
-  console.log('Tags in getStaticPaths:', tags); // Отладка
+  console.log('Posts in getStaticPaths:', posts.length, posts.map(p => p.data.title));
+  const allTags = [...new Set(posts.flatMap(post => post.data.tags ?? []))];
+  console.log('Tags in getStaticPaths:', allTags);
 
-  // Путь для всех постов (/blog)
-  const paths: Array<{ params: { slug: string }; props: { tag: string | null; posts: typeof posts } }> = [
-    { params: { slug: '' }, props: { tag: null, posts } },
+  return [
+    { params: { tag: '' }, props: { tag: null, posts } },
+    ...allTags.map(tag => ({
+      params: { tag: slugify(tag) },
+      props: { tag, posts: posts.filter(p => p.data.tags?.includes(tag)) },
+    })),
   ];
-
-  // Пути для каждого тега (/blog/astro, /blog/lunatina)
-  tags.forEach(tag => {
-    const filteredPosts = posts.filter(post => (post.data.tags ?? []).includes(tag));
-    console.log(`Filtered posts for tag "${tag}":`, filteredPosts); // Отладка
-    paths.push({
-      params: { slug: slugify(tag) },
-      props: { tag, posts: filteredPosts },
-    });
-  });
-
-  return paths;
 }
 
 interface Props {
@@ -66,30 +56,28 @@ interface Props {
 }
 
 const { tag, posts = [] } = Astro.props;
-console.log('Props in template:', { tag, posts }); // Отладка
-
-const tags: string[] = posts.length ? [...new Set(posts.flatMap(post => post.data.tags ?? []))] : [];
-const tagMap = tags.reduce((acc: Record<string, string>, tag) => {
+console.log('Props in template:', { tag, postsLength: posts.length, posts: posts.map(p => p.data.title) });
+const allTags = posts.length ? [...new Set(posts.flatMap(post => post.data.tags ?? []))] : [];
+const tagMap = allTags.reduce((acc: Record<string, string>, tag) => {
   acc[slugify(tag)] = tag;
   return acc;
 }, {});
-console.log('Tags in getStaticPaths:', tags); // Отладка
 ---
 
 <Layout title="Блог" description="Посты по темам: психология, маркетинг и т.д.">
   <main class="container py-12">
-    <h1 class="text-4xl mb-8">Блог {tag ? `| ${tagMap[slugify(tag)] || tag}` : ''}</h1>
+    <h1 class="text-4xl mb-8">Блог {tag ? `| ${tagMap[tag] || tag}` : ''}</h1>
     <nav class="flex flex-wrap gap-2 mb-8">
-      <a href="/Lunatina/blog" class="tag">Все</a>
-      {tags.map(tag => (
-        <a href={`/Lunatina/blog/${slugify(tag)}`} class="tag">{tag}</a>
+      <a href="/blog" class="tag">Все</a>
+      {allTags.map(tag => (
+        <a href={`/blog/${slugify(tag)}`} class="tag">{tag}</a>
       ))}
     </nav>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {posts.length ? (
         posts.map(post => (
           <a
-            href={`/Lunatina/blog/${post.slug}`}
+            href={`/blog/${post.slug}`}
             class="block p-6 bg-gradient-to-br from-emerald-50 to-purple-50 dark:bg-gradient-to-br dark:from-emerald-900 dark:to-purple-900 rounded-lg shadow-sm hover:shadow-md transition"
           >
             <img
@@ -103,7 +91,7 @@ console.log('Tags in getStaticPaths:', tags); // Отладка
           </a>
         ))
       ) : (
-        <p>Нет постов для отображения.</p>
+        <p>Нет постов для отображения. Проверьте console.log в терминале.</p>
       )}
     </div>
   </main>
