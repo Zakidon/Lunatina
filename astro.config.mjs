@@ -5,11 +5,10 @@ import sitemap from '@astrojs/sitemap';
 import rehypeSlug from 'rehype-slug';
 import rehypePrettyCode from 'rehype-pretty-code';
 
-
 export default defineConfig({
   output: 'static',  // Обязательно для Pages
-  site: 'https://zakidon.github.io/Lunatina',  // Твоя ссылка
-  base: '/',
+  site: 'https://zakidon.github.io/Lunatina',  // ← Добавьте запятую
+  base: '/Lunatina',
   integrations: [
     tailwind({
       configFile: './tailwind.config.js',
@@ -26,5 +25,5 @@ export default defineConfig({
       ],
     }),
     sitemap(),
-    ],
+  ],
 });
