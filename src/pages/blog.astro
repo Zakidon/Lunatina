@@ -67,11 +67,13 @@ interface Props {
 
 const { tag, posts = [] } = Astro.props;
 console.log('Props in template:', { tag, posts }); // Отладка
+
 const tags: string[] = posts.length ? [...new Set(posts.flatMap(post => post.data.tags ?? []))] : [];
 const tagMap = tags.reduce((acc: Record<string, string>, tag) => {
   acc[slugify(tag)] = tag;
   return acc;
 }, {});
+console.log('Tags in getStaticPaths:', tags); // Отладка
 ---
 
 <Layout title="Блог" description="Посты по темам: психология, маркетинг и т.д.">
