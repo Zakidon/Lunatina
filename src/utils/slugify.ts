@@ -5,12 +5,8 @@ export const slugify = (text: string) => {
     'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts',
     'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ы': 'y', 'э': 'e', 'ю': 'yu', 'я': 'ya',
   };
-  return text
-    .toLowerCase()
-    .split('')
-    .map(char => map[char] || char)
-    .join('')
-    .replace(/[^a-z0-9]/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
+  text = text.replace(/[^a-zA-Z0-9а-яё]/g, '-');
+  text = text.split('').map(char => map[char] || char).join('');
+  text = text.replace(/-+/g, '-').replace(/^-+|-+$/g, '');
+  return text || 'default-slug';
 };
