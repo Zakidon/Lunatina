@@ -3,9 +3,9 @@ import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
 import '../styles/base.css';
 import '../styles/components.css';
-import '../styles/headerthemes/green-purple-header.css'; // Новое "пальто"
+import '../styles/headerthemes/green-purple-header.css';
 
-export const prerender = false; // Динамическая страница для query-параметров
+export const prerender = true; // Для статического рендера
 
 const slugify = (text: string) => {
   const map: Record<string, string> = {
@@ -24,32 +24,65 @@ const slugify = (text: string) => {
     .replace(/^-|-$/g, '');
 };
 
-const posts = await getCollection('blog');
-const tags = [...new Set(posts.flatMap(post => post.data.tags || []))];
-const tagMap: Record<string, string> = tags.reduce((acc: Record<string, string>, tag) => {
+// Генерируем статические пути: /blog (все посты) и /blog/[tag] (по тегам)
+export async function getStaticPaths() {
+  const posts = (await getCollection('blog')) || []; // Если коллекция пустая, возвращаем пустой массив
+  const tags = [...new Set(posts.flatMap(post => post.data.tags || []))];
+
+  // Путь для всех постов (/blog)
+  const paths: Array<{ params: { slug: string }; props: { tag: string | null; posts: typeof posts } }> = [
+    { params: { slug: '' }, props: { tag: null, posts } }, // Пустой slug для /blog
+  ];
+
+  // Пути для каждого тега (/blog/astro, /blog/lunatina)
+  tags.forEach(tag => {
+    const filteredPosts = posts.filter(post => (post.data.tags || []).includes(tag));
+    paths.push({
+      params: { slug: slugify(tag) },
+      props: { tag, posts: filteredPosts }, // tag уже string
+    });
+  });
+
+  return paths;
+}
+
+interface Props {
+  tag: string | null;
+  posts: Array<{
+    slug: string;
+    data: {
+      title: string;
+      description?: string;
+      tags?: string[];
+      image?: string;
+      date?: Date;
+      category?: string;
+      musicUrl?: string;
+    };
+  }>;
+}
+
+const { tag, posts = [] } = Astro.props; // Значение по умолчанию — пустой массив
+const tags: string[] = posts.length ? [...new Set(posts.flatMap(post => post.data.tags ?? []))] : [];
+const tagMap = tags.reduce((acc: Record<string, string>, tag) => {
   acc[slugify(tag)] = tag;
   return acc;
 }, {});
-
-const tag = new URL(Astro.request.url).searchParams.get('tag') || null;
-const filteredPosts = tag
-  ? posts.filter(post => (post.data.tags || []).map(slugify).includes(tag))
-  : posts;
 ---
 
 <Layout title="Блог" description="Посты по темам: психология, маркетинг и т.д.">
   <main class="container py-12">
-    <h1 class="text-4xl mb-8">Блог {tag ? `| ${tagMap[tag] || tag}` : ''}</h1>
+    <h1 class="text-4xl mb-8">Блог {tag ? `| ${tagMap[slugify(tag)] || tag}` : ''}</h1>
     <nav class="flex flex-wrap gap-2 mb-8">
-      <a href="/blog" class="tag">Все</a>
+      <a href="/Lunatina/blog" class="tag">Все</a>
       {tags.map(tag => (
-        <a href={`/blog?tag=${slugify(tag)}`} class="tag">{tag}</a>
+        <a href={`/Lunatina/blog/${slugify(tag)}`} class="tag">{tag}</a>
       ))}
     </nav>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {filteredPosts.map(post => (
+      {posts.map(post => (
         <a
-          href={`/blog/${post.slug}`}
+          href={`/Lunatina/blog/${post.slug}`}
           class="block p-6 bg-gradient-to-br from-emerald-50 to-purple-50 dark:bg-gradient-to-br dark:from-emerald-900 dark:to-purple-900 rounded-lg shadow-sm hover:shadow-md transition"
         >
           <img
